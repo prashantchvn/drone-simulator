@@ -1,4 +1,4 @@
-import mapboxgl from "!mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import React, { useRef, useEffect, useState } from "react";
 
 function MapComponent() {
@@ -27,7 +27,7 @@ function MapComponent() {
     });
   });
 
-  mapboxgl.accessToken = process.env.ACCESS_TOKEN;
+  mapboxgl.accessToken = "pk.eyJ1IjoicHJhc2hhbnRjaHZuIiwiYSI6ImNsZHUzdnJoeTAyMmgzeHJmZDl4cDVkb2MifQ.JBUOJpgp3v-dAdXWpYCNXg";
 
   return (
     <div>

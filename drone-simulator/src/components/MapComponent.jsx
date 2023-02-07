@@ -1,18 +1,18 @@
 import mapboxgl from "mapbox-gl";
 import React, { useRef, useEffect, useState } from "react";
+import geojson from "./geoJson";
 
 function MapComponent() {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [lng, setLng] = useState(73.8566);
-  const [lat, setLat] = useState(18.5201);
-  const [zoom, setZoom] = useState(17);
+  const [lng, setLng] = useState(geojson[0].lat);
+  const [lat, setLat] = useState(geojson[0].lng);
+  const [zoom, setZoom] = useState(18.5);
   //marker for the map
   let marker;
   let mapInstance;
 
-  let lat1 = 73.8566;
-  let lng1 = 18.5201;
+  let i = 1;
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -25,7 +25,7 @@ function MapComponent() {
       const el = document.createElement("div");
       el.className = "marker";
       marker = new mapboxgl.Marker(el)
-        .setLngLat([73.8566, 18.5201])
+        .setLngLat([lat,lng])
         .addTo(mapInstance);
     });
   });
@@ -36,9 +36,11 @@ function MapComponent() {
 
   const updateLatLang = ()=>{
       setTimeout(() => {
-        lat1 = lat1 + 0.00001;
-        lng1 = lng1 + 0.00001;
-        marker.setLngLat([lat1, lng1])
+        if(i>=geojson.length) return // breaking condition
+        marker.setLngLat([geojson[i].lat, geojson[i].lng])
+        setLat(geojson[i].lat)
+        setLng(geojson[i].lng)
+        i = i+1;
         updateLatLang()
       }, 2000);
   };

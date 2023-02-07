@@ -34,10 +34,6 @@ function MapComponent() {
     });
   });
 
-  useEffect(() => {
-    if (!map.current) return;
-  }, []);
-
   mapboxgl.accessToken =
     "pk.eyJ1IjoicHJhc2hhbnRjaHZuIiwiYSI6ImNsZHUzdnJoeTAyMmgzeHJmZDl4cDVkb2MifQ.JBUOJpgp3v-dAdXWpYCNXg";
 

@@ -2,6 +2,9 @@ import mapboxgl from "!mapbox-gl";
 import React, { useRef, useEffect, useState } from "react";
 
 function MapComponent() {
+
+  mapboxgl.accessToken = process.env.ACCESS_TOKEN;
+
   return (
     <Map
       initialViewState={{

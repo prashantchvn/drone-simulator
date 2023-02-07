@@ -4,25 +4,44 @@ import React, { useRef, useEffect, useState } from "react";
 function MapComponent() {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [lng, setLng] = useState(73.85663772073566);
-  const [lat, setLat] = useState(18.520064783835046);
-  const [zoom, setZoom] = useState(9);
+  const [lng, setLng] = useState(73.8566);
+  const [lat, setLat] = useState(18.5201);
+  const [zoom, setZoom] = useState(17);
+  //marker for the map
+  let marker;
+  let mapInstance;
+
+  let lat1 = 73.8566;
+  let lng1 = 18.5201;
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
-    let mapInstance = map.current = new mapboxgl.Map({
+    mapInstance = map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/prashantchvn/cldu952og000z01mzj256jcip",
       center: [lng, lat],
       zoom: zoom,
-    }).on("load",() => {
+    }).on("load", () => {
       const el = document.createElement("div");
       el.className = "marker";
-      new mapboxgl.Marker(el)
-        .setLngLat([73.85663772073566, 18.520064783835046])
+      marker = new mapboxgl.Marker(el)
+        .setLngLat([73.8566, 18.5201])
         .addTo(mapInstance);
     });
   });
+
+  useEffect(() => {
+    updateLatLang();
+  }, []);
+
+  const updateLatLang = ()=>{
+      setTimeout(() => {
+        lat1 = lat1 + 0.00001;
+        lng1 = lng1 + 0.00001;
+        marker.setLngLat([lat1, lng1])
+        updateLatLang()
+      }, 2000);
+  };
 
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize

@@ -1,32 +1,83 @@
 import React, { useState } from "react";
 import ShowGeoData from "./ShowGeoData";
+import { useNavigate } from "react-router-dom";
 
 function UserInputForm() {
+  const [lat, setLat] = useState(0);
+  const [lng, setLng] = useState(0);
 
-    const [lat, setLat] = useState(0);
-    const [lng, setLng] = useState(0);
+  let navigate = useNavigate(); 
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(lat + " " + lng)
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(lat + " " + lng);
+  };
 
   return (
     <div className="flex text-left overflow-hidden max-h-screen">
-      <div className="w-3/5 ml-6 p-11">
-        <form onSubmit={handleSubmit}>
-          <h3 className="">Hello,</h3>
-          <label>Please Enter co-ordinates for the lattitude : </label>
-          <input value={lat} onChange={(e)=>{ setLat(e.target.value)}} min={-90} max={90} step=".00001" className="" type="number" />
-          <br/>
-          <label>Please Enter co-ordinates for the Longitude : </label>
-          <input value={lng} onChange={(e)=>{ setLng(e.target.value)}}  min={-180} max={180} step=".00001" className="" type="number" />
-          <br/>
-          <button type="submit">Add to List</button>
+      <div className="w-3/5 ml-6 p-36">
+        <form onSubmit={handleSubmit} className="border-2 p-24">
+          <h3 className="text-2xl">
+            Hello,
+            <br />
+            Please Enter co-ordinates for the drone
+          </h3>
+          <div className="justify-between flex mt-8">
+            <label>Lattitude : </label>
+            <input
+              value={lat}
+              onChange={(e) => {
+                setLat(e.target.value);
+              }}
+              min={-90}
+              max={90}
+              step=".00001"
+              className=""
+              type="number"
+            />
+          </div>
+          <div className="justify-between flex mt-4">
+            <label>Longitude : </label>
+            <input
+              value={lng}
+              onChange={(e) => {
+                setLng(e.target.value);
+              }}
+              min={-180}
+              max={180}
+              step=".00001"
+              className=""
+              type="number"
+            />
+          </div>
+          <button
+            type="submit"
+            className="justify-center w-full text-center mt-8 h-8 rounded-md bg-red-500"
+          >
+            Add to List
+          </button>
         </form>
       </div>
-      <div className="w-2/5 max-h-screen overflow-y-scroll">
+      <div className="w-2/5 ">
+        <h3 className="my-4 text-xl font-bold"> Waypoint co-ordinates</h3>
         <ShowGeoData />
+        <div className="flex justify-between ml-6 w-4/5 mt-6">
+          <button
+            type="submit"
+            onClick={()=>{
+              navigate('/simulate/drone')
+            }}
+            className="w-36 text-white font-semibold h-8 rounded-md bg-red-500 "
+          >
+            Simulate
+          </button>
+          <button
+            type="submit"
+            className="w-36 text-white font-semibold h-8 rounded-md bg-red-500 "
+          >
+            Remove All
+          </button>
+        </div>
       </div>
     </div>
   );

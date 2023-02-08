@@ -1,6 +1,9 @@
 import mapboxgl from "mapbox-gl";
 import React, { useRef, useEffect, useState } from "react";
 import geojson from "./geoJson";
+import pause from "../icons/pause.png";
+import play from "../icons/play.png";
+import { toast } from "react-toastify";
 
 function MapComponent() {
   const mapContainer = useRef(null);
@@ -11,6 +14,7 @@ function MapComponent() {
   //marker for the map
   let marker;
   let mapInstance;
+  let isPlaying = true;
 
   let i = 1;
 
@@ -24,26 +28,23 @@ function MapComponent() {
     }).on("load", () => {
       const el = document.createElement("div");
       el.className = "marker";
-      marker = new mapboxgl.Marker(el)
-        .setLngLat([lat,lng])
-        .addTo(mapInstance);
+      marker = new mapboxgl.Marker(el).setLngLat([lat, lng]).addTo(mapInstance);
     });
   });
 
   useEffect(() => {
-    updateLatLang();
+    const interval = setInterval(() => {
+      if (isPlaying) {
+        if (i >= geojson.length){
+          isPlaying = false;
+          toast("Drone reached destination")
+        }; // breaking condition
+        marker.setLngLat([geojson[i].lat, geojson[i].lng]);
+        i++;
+      }
+    }, 2000);
+    return () => clearInterval(interval);
   }, []);
-
-  const updateLatLang = ()=>{
-      setTimeout(() => {
-        if(i>=geojson.length) return // breaking condition
-        marker.setLngLat([geojson[i].lat, geojson[i].lng])
-        setLat(geojson[i].lat)
-        setLng(geojson[i].lng)
-        i = i+1;
-        updateLatLang()
-      }, 2000);
-  };
 
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
@@ -62,6 +63,26 @@ function MapComponent() {
     <div>
       <div className="sidebar">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+      </div>
+      <div className="sidebar-right">
+        <img
+          src={play}
+          onClick={() => {
+            if(!isPlaying){
+              isPlaying = true;
+              toast("Animation Resumed");  
+            }
+          }}
+        />
+        <img
+          src={pause}
+          onClick={() => {
+            if (isPlaying) {
+              isPlaying = false;
+              toast("Animation Paused");
+            }
+          }}
+        />
       </div>
       <div ref={mapContainer} className="map-container" />
     </div>

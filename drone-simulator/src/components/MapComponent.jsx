@@ -12,12 +12,11 @@ function MapComponent() {
   const [lat, setLat] = useState();
   const [zoom, setZoom] = useState(18.5);
   const [geojson, setGeojson] = useState([]);
+  const [i,setI] = useState(0)
   //marker for the map
   let marker;
   let mapInstance;
   let isPlaying = true;
-
-  let i = 1;
 
   useEffect(() => {
     axios
@@ -45,8 +44,8 @@ function MapComponent() {
         const el = document.createElement("div");
         el.className = "marker";
         marker = new mapboxgl.Marker(el)
-          .setLngLat([geojson[0].lat, geojson[0].lng])
-          .addTo(mapInstance);
+          .setLngLat([lat,lng])
+          .addTo(map.current);
       });
     }
   },[geojson]);
@@ -59,13 +58,12 @@ function MapComponent() {
             isPlaying = false;
             toast("Drone reached destination");
           } // breaking condition
-          marker.setLngLat([geojson[i].lat, geojson[i].lng]);
-          i++;
+          marker.setLngLat([lat, lng]);
         }
       }, 2000);
       return () => clearInterval(interval);
     }
-  }, []);
+  }, [geojson]);
 
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize

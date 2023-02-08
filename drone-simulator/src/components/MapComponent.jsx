@@ -4,7 +4,6 @@ import axios from "axios";
 import pause from "../icons/pause.png";
 import play from "../icons/play.png";
 import { toast } from "react-toastify";
-import Counter from "multer/lib/counter";
 
 function MapComponent() {
   const mapContainer = useRef(null);
@@ -17,9 +16,8 @@ function MapComponent() {
   const [marker,setMarker] = useState({})
   const [isPlaying, setIsPlaying] = useState(true)
 
-  //marker for the map
-
   useEffect(() => {
+    // Load the data into our compoenent
     axios
       .get("http://localhost:5000/api/waypoints")
       .then((res) => {
@@ -35,6 +33,7 @@ function MapComponent() {
 
   useEffect(() => {
     if (geojson.length) {
+      // initializes map in our window
       if (map.current) return; // initialize map only once
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
@@ -72,6 +71,7 @@ function MapComponent() {
   }
 
   useEffect(() => {
+    // update the i value so that drone can increament as we want
     if (geojson.length) {
       const interval = setInterval(() => {
         if (isPlaying) {
@@ -85,6 +85,7 @@ function MapComponent() {
   }, [geojson]);
 
   useEffect(() => {
+    // handle the zoom in and zoom out condition of the map
     if (!map.current) return; // wait for map to initialize
 
     map.current.on("move", () => {

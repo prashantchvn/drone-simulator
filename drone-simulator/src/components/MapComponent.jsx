@@ -1,12 +1,15 @@
 import mapboxgl from "mapbox-gl";
 import React, { useRef, useEffect, useState } from "react";
 import geojson from "./geoJson";
+import pause from "../icons/pause.png";
+import play from "../icons/play.png";
 
 function MapComponent() {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(geojson[0].lat);
   const [lat, setLat] = useState(geojson[0].lng);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [zoom, setZoom] = useState(18.5);
   //marker for the map
   let marker;
@@ -24,25 +27,24 @@ function MapComponent() {
     }).on("load", () => {
       const el = document.createElement("div");
       el.className = "marker";
-      marker = new mapboxgl.Marker(el)
-        .setLngLat([lat,lng])
-        .addTo(mapInstance);
+      marker = new mapboxgl.Marker(el).setLngLat([lat, lng]).addTo(mapInstance);
     });
   });
 
-  useEffect(() => {
-    updateLatLang();
-  }, []);
+  useEffect(()=>{
+    // start the animation
+    startAnimation()
+  },[])
 
-  const updateLatLang = ()=>{
-      setTimeout(() => {
-        if(i>=geojson.length) return // breaking condition
-        marker.setLngLat([geojson[i].lat, geojson[i].lng])
-        setLat(geojson[i].lat)
-        setLng(geojson[i].lng)
-        i = i+1;
-        updateLatLang()
-      }, 2000);
+  const startAnimation = () => {
+    setTimeout(() => {
+      if (i >= geojson.length) return; // breaking condition
+      marker.setLngLat([geojson[i].lat, geojson[i].lng]);
+      setLat(geojson[i].lat);
+      setLng(geojson[i].lng);
+      i = i + 1;
+      startAnimation();
+    }, 2000);
   };
 
   useEffect(() => {
@@ -62,6 +64,15 @@ function MapComponent() {
     <div>
       <div className="sidebar">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+      </div>
+      <div className="sidebar-right">
+        <img src={isPlaying ? pause : play} onClick={()=>{
+          if(isPlaying){
+            setIsPlaying(false)
+          }else{
+            setIsPlaying(true)
+          }
+        }}/>
       </div>
       <div ref={mapContainer} className="map-container" />
     </div>

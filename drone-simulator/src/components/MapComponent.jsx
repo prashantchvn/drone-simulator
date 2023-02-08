@@ -3,17 +3,18 @@ import React, { useRef, useEffect, useState } from "react";
 import geojson from "./geoJson";
 import pause from "../icons/pause.png";
 import play from "../icons/play.png";
+import { toast } from "react-toastify";
 
 function MapComponent() {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(geojson[0].lat);
   const [lat, setLat] = useState(geojson[0].lng);
-  const [isPlaying, setIsPlaying] = useState(true);
   const [zoom, setZoom] = useState(18.5);
   //marker for the map
   let marker;
   let mapInstance;
+  let isPlaying = true;
 
   let i = 1;
 
@@ -33,15 +34,17 @@ function MapComponent() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (i >= geojson.length) return; // breaking condition
-      marker.setLngLat([geojson[i].lat, geojson[i].lng]);
-      setLat(geojson[i].lat);
-      setLng(geojson[i].lng);
-      i = i + 1;
+      if (isPlaying) {
+        if (i >= geojson.length){
+          isPlaying = false;
+          toast("Drone reached destination")
+        }; // breaking condition
+        marker.setLngLat([geojson[i].lat, geojson[i].lng]);
+        i++;
+      }
     }, 2000);
     return () => clearInterval(interval);
   }, []);
-
 
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
@@ -63,12 +66,20 @@ function MapComponent() {
       </div>
       <div className="sidebar-right">
         <img
-          src={isPlaying ? pause : play}
+          src={play}
+          onClick={() => {
+            if(!isPlaying){
+              isPlaying = true;
+              toast("Animation Resumed");  
+            }
+          }}
+        />
+        <img
+          src={pause}
           onClick={() => {
             if (isPlaying) {
-              setIsPlaying(false);
-            } else {
-              setIsPlaying(true);
+              isPlaying = false;
+              toast("Animation Paused");
             }
           }}
         />

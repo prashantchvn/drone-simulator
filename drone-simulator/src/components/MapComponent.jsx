@@ -31,21 +31,17 @@ function MapComponent() {
     });
   });
 
-  useEffect(()=>{
-    // start the animation
-    startAnimation()
-  },[])
-
-  const startAnimation = () => {
-    setTimeout(() => {
+  useEffect(() => {
+    const interval = setInterval(() => {
       if (i >= geojson.length) return; // breaking condition
       marker.setLngLat([geojson[i].lat, geojson[i].lng]);
       setLat(geojson[i].lat);
       setLng(geojson[i].lng);
       i = i + 1;
-      startAnimation();
     }, 2000);
-  };
+    return () => clearInterval(interval);
+  }, []);
+
 
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
@@ -66,13 +62,16 @@ function MapComponent() {
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
       <div className="sidebar-right">
-        <img src={isPlaying ? pause : play} onClick={()=>{
-          if(isPlaying){
-            setIsPlaying(false)
-          }else{
-            setIsPlaying(true)
-          }
-        }}/>
+        <img
+          src={isPlaying ? pause : play}
+          onClick={() => {
+            if (isPlaying) {
+              setIsPlaying(false);
+            } else {
+              setIsPlaying(true);
+            }
+          }}
+        />
       </div>
       <div ref={mapContainer} className="map-container" />
     </div>

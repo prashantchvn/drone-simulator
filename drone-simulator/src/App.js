@@ -1,11 +1,17 @@
 import './App.css';
 import MapComponent from './components/MapComponent';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
+import UserInputForm from './components/UserInputForm'
+import { Route, Routes } from "react-router-dom"
 import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <div className="App">
-      <MapComponent />
+
+      <Routes>
+        <Route path="/" element={<UserInputForm/>} />
+        <Route path="/simulate/drone" element={<MapComponent/>} />
+      </Routes>
       <ToastContainer
         position="bottom-right"
         autoClose={3000}

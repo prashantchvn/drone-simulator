@@ -14,6 +14,9 @@ function UserInputForm() {
   useEffect(()=>{
     axios.get('http://localhost:5000/api/waypoints').then((res)=>{
       setGeojson(res.data.data)
+    }).catch((error)=>{
+      console.log(error)
+      toast.error('Something went wrong')
     })
   },[])
 
@@ -25,6 +28,9 @@ function UserInputForm() {
     }).then((res)=>{
       setGeojson(res.data.data)
       toast('waypoint added successfully')
+    }).catch((error)=>{
+      console.log(error)
+      toast.error('Something went wrong')
     })
   };
 

@@ -1,59 +1,68 @@
 import mapboxgl from "mapbox-gl";
 import React, { useRef, useEffect, useState } from "react";
-import geojson from "./geoJson";
 import pause from "../icons/pause.png";
 import play from "../icons/play.png";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 function MapComponent() {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [lng, setLng] = useState(geojson[0].lat);
-  const [lat, setLat] = useState(geojson[0].lng);
+  const [lng, setLng] = useState();
+  const [lat, setLat] = useState();
   const [zoom, setZoom] = useState(18.5);
   //marker for the map
   let marker;
   let mapInstance;
   let isPlaying = true;
+  let geojson = [];
 
   let i = 1;
 
   useEffect(() => {
-    if (map.current) return; // initialize map only once
-    mapInstance = map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/prashantchvn/cldu952og000z01mzj256jcip",
-      center: [lng, lat],
-      zoom: zoom,
-    }).on("load", () => {
-      const el = document.createElement("div");
-      el.className = "marker";
-      marker = new mapboxgl.Marker(el).setLngLat([lat, lng]).addTo(mapInstance);
+    axios.get("http://localhost:5000/api/waypoints").then((res) => {
+      geojson = res.data.data;
+      setLat(geojson[0].lat);
+      setLng(geojson[0].lng);
+      mapInstance = map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/prashantchvn/cldu952og000z01mzj256jcip",
+        center: [geojson[0].lat,geojson[0].lng],
+        zoom: zoom,
+      }).on("load", () => {
+        const el = document.createElement("div");
+        el.className = "marker";
+        marker = new mapboxgl.Marker(el)
+          .setLngLat([geojson[0].lat,geojson[0].lng])
+          .addTo(mapInstance);
+      });
     });
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (isPlaying) {
-        if (i >= geojson.length){
-          isPlaying = false;
-          toast("Drone reached destination")
-        }; // breaking condition
-        marker.setLngLat([geojson[i].lat, geojson[i].lng]);
-        i++;
-      }
-    }, 2000);
-    return () => clearInterval(interval);
+    console.log(2);
+    // const interval = setInterval(() => {
+    //   if (isPlaying) {
+    //     if (i >= geojson.length){
+    //       isPlaying = false;
+    //       toast("Drone reached destination")
+    //     }; // breaking condition
+    //     marker.setLngLat([geojson[i].lat, geojson[i].lng]);
+    //     i++;
+    //   }
+    // }, 2000);
+    // return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (!map.current) return; // wait for map to initialize
+    console.log(3);
+    // if (!map.current) return; // wait for map to initialize
 
-    map.current.on("move", () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-      setZoom(map.current.getZoom().toFixed(2));
-    });
+    // map.current.on("move", () => {
+    //   setLng(map.current.getCenter().lng.toFixed(4));
+    //   setLat(map.current.getCenter().lat.toFixed(4));
+    //   setZoom(map.current.getZoom().toFixed(2));
+    // });
   });
 
   mapboxgl.accessToken =
@@ -68,9 +77,9 @@ function MapComponent() {
         <img
           src={play}
           onClick={() => {
-            if(!isPlaying){
+            if (!isPlaying) {
               isPlaying = true;
-              toast("Animation Resumed");  
+              toast("Animation Resumed");
             }
           }}
         />

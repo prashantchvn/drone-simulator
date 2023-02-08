@@ -15,9 +15,9 @@ function MapComponent() {
   const [geojson, setGeojson] = useState([]);
   const [i, setI] = useState(0);
   const [marker,setMarker] = useState({})
+  const [isPlaying, setIsPlaying] = useState(true)
 
   //marker for the map
-  let isPlaying = true;
 
   useEffect(() => {
     axios
@@ -58,19 +58,23 @@ function MapComponent() {
 
   const updateMarker = (i) => {
     let waypoint = geojson
-    if(waypoint[i]){
+    if(isPlaying && i>=waypoint.length && waypoint.length > 0){
+      destinationReached()
+    }
+    if(waypoint[i] && isPlaying){
       marker.setLngLat([waypoint[i].lat,waypoint[i].lng])
     }
+  }
+
+  const destinationReached = () =>{
+    setIsPlaying(false)
+    toast.warn("Destinatin Reached")
   }
 
   useEffect(() => {
     if (geojson.length) {
       const interval = setInterval(() => {
         if (isPlaying) {
-          if (i >= geojson.length) {
-            isPlaying = false;
-            toast("Drone reached destination");
-          } // breaking condition
           setI((val) => {
             return val + 1;
           });
@@ -104,7 +108,7 @@ function MapComponent() {
             src={play}
             onClick={() => {
               if (!isPlaying) {
-                isPlaying = true;
+                setIsPlaying(true)
                 toast("Animation Resumed");
               }
             }}
@@ -113,7 +117,7 @@ function MapComponent() {
             src={pause}
             onClick={() => {
               if (isPlaying) {
-                isPlaying = false;
+                setIsPlaying(false)
                 toast("Animation Paused");
               }
             }}

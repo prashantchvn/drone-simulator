@@ -1,37 +1,57 @@
 import React, { useEffect, useState } from "react";
 import ShowGeoData from "./ShowGeoData";
-import axios from "axios"
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {toast} from "react-toastify"
+import { toast } from "react-toastify";
 
 function UserInputForm() {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
   const [geojson, setGeojson] = useState([]);
 
-  let navigate = useNavigate(); 
+  let navigate = useNavigate();
 
-  useEffect(()=>{
-    axios.get('http://localhost:5000/api/waypoints').then((res)=>{
-      setGeojson(res.data.data)
-    }).catch((error)=>{
-      console.log(error)
-      toast.error('Something went wrong')
-    })
-  },[])
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/waypoints")
+      .then((res) => {
+        setGeojson(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Something went wrong");
+      });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/api/waypoints',{
-      lat:lat,
-      lng : lng
-    }).then((res)=>{
-      setGeojson(res.data.data)
-      toast('waypoint added successfully')
-    }).catch((error)=>{
-      console.log(error)
-      toast.error('Something went wrong')
-    })
+    axios
+      .post("http://localhost:5000/api/waypoints", {
+        lat: lat,
+        lng: lng,
+      })
+      .then((res) => {
+        setGeojson(res.data.data);
+        toast("waypoint added successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Something went wrong");
+      });
+  };
+
+  const deleteAll = (e) => {
+    e.preventDefault();
+    axios
+      .delete("http://localhost:5000/api/waypoints")
+      .then((res) => {
+        setGeojson([]);
+        toast("All waypoints deleted successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Something went wrong");
+      });
   };
 
   return (
@@ -81,24 +101,29 @@ function UserInputForm() {
       </div>
       <div className="w-2/5 ">
         <h3 className="my-4 text-xl font-bold"> Waypoint co-ordinates</h3>
-        <ShowGeoData geojson={geojson}/>
+        <ShowGeoData geojson={geojson} />
+        {geojson.length ? (
         <div className="flex justify-between ml-6 w-4/5 mt-6">
           <button
-            type="submit"
-            onClick={()=>{
-              navigate('/simulate/drone')
+            onClick={() => {
+              navigate("/simulate/drone");
             }}
             className="w-36 text-white font-semibold h-8 rounded-md bg-red-500 "
           >
             Simulate
           </button>
           <button
-            type="submit"
+            onClick={deleteAll}
             className="w-36 text-white font-semibold h-8 rounded-md bg-red-500 "
           >
             Remove All
           </button>
         </div>
+        ) : (
+        <div>
+          
+        </div>
+        )}
       </div>
     </div>
   );

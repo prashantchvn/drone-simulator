@@ -4,6 +4,7 @@ import axios from "axios";
 import pause from "../icons/pause.png";
 import play from "../icons/play.png";
 import { toast } from "react-toastify";
+import Counter from "multer/lib/counter";
 
 function MapComponent() {
   const mapContainer = useRef(null);
@@ -12,10 +13,10 @@ function MapComponent() {
   const [lat, setLat] = useState();
   const [zoom, setZoom] = useState(18.5);
   const [geojson, setGeojson] = useState([]);
-  const [i,setI] = useState(0)
+  const [i, setI] = useState(0);
+  const [marker,setMarker] = useState({})
+
   //marker for the map
-  let marker;
-  let mapInstance;
   let isPlaying = true;
 
   useEffect(() => {
@@ -43,12 +44,24 @@ function MapComponent() {
       }).on("load", () => {
         const el = document.createElement("div");
         el.className = "marker";
-        marker = new mapboxgl.Marker(el)
-          .setLngLat([lat,lng])
-          .addTo(map.current);
+        setMarker(new mapboxgl.Marker(el)
+          .setLngLat([lat, lng])
+          .addTo(map.current))
       });
     }
-  },[geojson]);
+  }, [geojson]);
+
+  
+  useEffect(() => {
+    updateMarker(i)
+  }, [i]);
+
+  const updateMarker = (i) => {
+    let waypoint = geojson
+    if(waypoint[i]){
+      marker.setLngLat([waypoint[i].lat,waypoint[i].lng])
+    }
+  }
 
   useEffect(() => {
     if (geojson.length) {
@@ -58,7 +71,9 @@ function MapComponent() {
             isPlaying = false;
             toast("Drone reached destination");
           } // breaking condition
-          marker.setLngLat([lat, lng]);
+          setI((val) => {
+            return val + 1;
+          });
         }
       }, 2000);
       return () => clearInterval(interval);

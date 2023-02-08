@@ -105,20 +105,19 @@ function MapComponent() {
         </div>
         <div className="sidebar-right">
           <img
-            src={play}
+            src={isPlaying ? pause : play}
             onClick={() => {
-              if (!isPlaying) {
+              if(isPlaying){
+                // will execute when animation is paused
+                setIsPlaying(false)                
+              }else{
+                // will execute when animation is paused
                 setIsPlaying(true)
-                toast("Animation Resumed");
-              }
-            }}
-          />
-          <img
-            src={pause}
-            onClick={() => {
-              if (isPlaying) {
-                setIsPlaying(false)
-                toast("Animation Paused");
+                if(i >= geojson.length){
+                  // will execute when the animation is finished and restarts the animation
+                  setI(0)
+                  toast("Animation restarted")
+                }               
               }
             }}
           />

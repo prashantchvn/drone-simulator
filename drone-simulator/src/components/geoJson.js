@@ -48,7 +48,9 @@ const geojson = [
         "time": 0,
         "lat": 73.85660,
         "lng": 18.52020
-    }
+    },
+    
+
 ]
 
 export default geojson;

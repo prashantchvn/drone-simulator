@@ -1,16 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShowGeoData from "./ShowGeoData";
+import axios from "axios"
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify"
 
 function UserInputForm() {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
+  const [geojson, setGeojson] = useState([]);
 
   let navigate = useNavigate(); 
 
+  useEffect(()=>{
+    axios.get('http://localhost:5000/api/waypoints').then((res)=>{
+      setGeojson(res.data.data)
+    })
+  },[])
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(lat + " " + lng);
+    axios.post('http://localhost:5000/api/waypoints',{
+      lat:lat,
+      lng : lng
+    }).then((res)=>{
+      setGeojson(res.data.data)
+      toast('waypoint added successfully')
+    })
   };
 
   return (
@@ -60,7 +75,7 @@ function UserInputForm() {
       </div>
       <div className="w-2/5 ">
         <h3 className="my-4 text-xl font-bold"> Waypoint co-ordinates</h3>
-        <ShowGeoData />
+        <ShowGeoData geojson={geojson}/>
         <div className="flex justify-between ml-6 w-4/5 mt-6">
           <button
             type="submit"

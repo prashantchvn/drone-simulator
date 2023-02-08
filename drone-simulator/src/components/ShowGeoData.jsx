@@ -1,9 +1,8 @@
 import React from "react";
-import geoJson from "./geoJson";
-function ShowGeoData() {
+function ShowGeoData({geojson}) {
   return (
     <div className="px-12 show-waypoint-container overflow-y-scroll">
-      {geoJson.map((data, index) => {
+      {geojson.map((data, index) => {
         return (
           <div
             key={index}
